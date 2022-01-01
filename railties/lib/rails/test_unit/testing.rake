@@ -35,6 +35,13 @@ namespace :test do
     end
   end
 
+  desc "Run tests that failed most recently"
+  task failed: "test:prepare" do
+    failed_tests_log = File.new("#{Rails.root.to_path}/test/failed_tests.log")
+    failed_tests = failed_tests_log.readlines
+    Rails::TestUnit::Runner.rake_run(failed_tests)
+  end
+
   desc "Runs all tests, including system tests"
   task all: "test:prepare" do
     Rails::TestUnit::Runner.rake_run(["test/**/*_test.rb"])

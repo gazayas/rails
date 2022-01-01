@@ -8,6 +8,11 @@ module Rails
     class_attribute :app_root
     class_attribute :executable, default: "rails test"
 
+    def initialize(io = $stdout, options = {})
+      @failed_tests = []
+      super
+    end
+
     def record(result)
       super
 
@@ -29,6 +34,8 @@ module Rails
       if fail_fast? && result.failure && !result.skipped?
         raise Interrupt
       end
+
+      log_failed_test(result.failure.location)
     end
 
     def report
@@ -56,6 +63,17 @@ module Rails
     end
 
     private
+      def log_failed_test(source_location_name)
+        source_location = relative_path_for(source_location_name)
+        file = File.new("#{Rails.root.to_path}/test/failed_tests.log")
+
+        read_type = @failed_tests.empty? ? "w+" : "a"
+        File.open(file, read_type) do |f|
+          f.write("#{source_location}\n")
+        end
+        @failed_tests << source_location
+      end
+
       def output_inline?
         options[:output_inline]
       end
