@@ -29,13 +29,12 @@ module Rails
         io.puts
         io.puts format_rerun_snippet(result)
         io.puts
+        log_failed_test(result.failure.location)
       end
 
       if fail_fast? && result.failure && !result.skipped?
         raise Interrupt
       end
-
-      log_failed_test(result.failure.location)
     end
 
     def report
