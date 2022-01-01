@@ -64,10 +64,8 @@ module Rails
     private
       def log_failed_test(source_location_name)
         source_location = relative_path_for(source_location_name)
-        file = File.new("#{Rails.root.to_path}/test/failed_tests.log")
-
         read_type = @failed_tests.empty? ? "w+" : "a"
-        File.open(file, read_type) do |f|
+        File.open("#{Rails.root.to_path}/test/failed_tests.log", read_type) do |f|
           f.write("#{source_location}\n")
         end
         @failed_tests << source_location
