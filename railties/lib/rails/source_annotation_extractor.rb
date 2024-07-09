@@ -24,9 +24,9 @@ module Rails
     class ParserExtractor < Struct.new(:pattern)
       if defined?(Prism)
         def annotations(file)
-          Prism.parse_file(file).comments.map do |comment|
+          Prism.parse_file(file).comments.filter_map do |comment|
             Annotation.new(comment.location.start_line, $1, $2) if comment.location.slice =~ pattern
-          end.compact
+          end
         end
       else
         class Parser < Ripper
